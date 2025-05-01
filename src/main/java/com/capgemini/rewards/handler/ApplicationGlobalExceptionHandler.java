@@ -23,7 +23,7 @@ public class ApplicationGlobalExceptionHandler {
         List<ErrorDTO> errorDTOList = new ArrayList<>();
         exception.getBindingResult().getFieldErrors()
                 .forEach(error -> {
-                    ErrorDTO errorDTO = new ErrorDTO(error.getField()+" : "+error.getDefaultMessage());
+                    ErrorDTO errorDTO = new ErrorDTO(error.getField() + " : " + error.getDefaultMessage());
                     errorDTOList.add(errorDTO);
                 });
         serviceResponse.setStatus(HttpStatus.BAD_REQUEST);
@@ -32,7 +32,7 @@ public class ApplicationGlobalExceptionHandler {
     }
 
     @ExceptionHandler(CustomerRewardNotFoundException.class)
-    public ServiceResponse<?> handleServiceException(CustomerRewardNotFoundException exception){
+    public ServiceResponse<?> handleServiceException(CustomerRewardNotFoundException exception) {
         ServiceResponse<?> serviceResponse = new ServiceResponse<>();
         List<ErrorDTO> errorDTOList = new ArrayList<>();
         errorDTOList.add(new ErrorDTO(exception.getMessage()));

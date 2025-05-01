@@ -10,5 +10,6 @@ import java.util.List;
 @Repository
 public interface RewardRepository extends JpaRepository<CustomerReward, Long> {
     List<CustomerReward> findByCustomerId(String customerId);
+
     List<CustomerReward> findAll();
 }

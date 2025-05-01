@@ -41,7 +41,6 @@ class RewardsControllerTest {
         when(service.calculateAllCustomerRewards()).thenReturn(list);
 
         ResponseEntity<List<RewardResponseDTO>> result = rewardsController.getAllRewards();
-
         Assertions.assertEquals(list, result.getBody());
         Assertions.assertEquals(HttpStatus.OK, result.getStatusCode());
     }
@@ -82,6 +81,7 @@ class RewardsControllerTest {
     void testDeleteTransaction() {
         ResponseEntity<String> result = rewardsController.deleteTransaction(Long.valueOf(1));
         verify(service).deleteTransaction(anyLong());
+
         Assertions.assertEquals("deleted successfully", result.getBody());
         Assertions.assertEquals(HttpStatus.GONE, result.getStatusCode());
     }

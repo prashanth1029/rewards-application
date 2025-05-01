@@ -1,4 +1,5 @@
 package com.capgemini.rewards.service;
+
 import com.capgemini.rewards.dao.RewardRepository;
 import com.capgemini.rewards.dto.RewardResponseDTO;
 

@@ -72,7 +72,7 @@ public class RewardsController {
     @DeleteMapping("/deleteReward/{id}")
     public ResponseEntity<String> deleteTransaction(@PathVariable Long id) {
         service.deleteTransaction(id);
-        return new ResponseEntity<>("deleted successfully",HttpStatus.GONE);
+        return new ResponseEntity<>("deleted successfully", HttpStatus.GONE);
     }
 
     @Operation(summary = "Update an existing transaction by ID", description = "Update the details of a specific transaction")
