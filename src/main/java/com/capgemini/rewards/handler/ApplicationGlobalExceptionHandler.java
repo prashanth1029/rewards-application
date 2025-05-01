@@ -2,6 +2,7 @@ package com.capgemini.rewards.handler;
 
 import com.capgemini.rewards.dto.ErrorDTO;
 import com.capgemini.rewards.dto.ServiceResponse;
+import com.capgemini.rewards.exception.CustomerNotFoundException;
 import com.capgemini.rewards.exception.CustomerRewardNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -33,6 +34,16 @@ public class ApplicationGlobalExceptionHandler {
 
     @ExceptionHandler(CustomerRewardNotFoundException.class)
     public ServiceResponse<?> handleServiceException(CustomerRewardNotFoundException exception) {
+        ServiceResponse<?> serviceResponse = new ServiceResponse<>();
+        List<ErrorDTO> errorDTOList = new ArrayList<>();
+        errorDTOList.add(new ErrorDTO(exception.getMessage()));
+        serviceResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        serviceResponse.setError(errorDTOList);
+        return serviceResponse;
+    }
+
+    @ExceptionHandler(CustomerNotFoundException.class)
+    public ServiceResponse<?> handleServiceException(CustomerNotFoundException exception) {
         ServiceResponse<?> serviceResponse = new ServiceResponse<>();
         List<ErrorDTO> errorDTOList = new ArrayList<>();
         errorDTOList.add(new ErrorDTO(exception.getMessage()));
