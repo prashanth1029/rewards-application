@@ -36,52 +36,64 @@ class RewardsControllerTest {
     void testGetAllRewards() {
         Map<String, Integer> map = new HashMap<>();
         map.put("monthlyPoints", Integer.valueOf(0));
-        when(service.calculateAllCustomerRewards()).thenReturn(Arrays.asList(new RewardResponseDTO("customerId", map, 0)));
+        RewardResponseDTO rewardResponseDTO = new RewardResponseDTO("customerId", map, 0);
+        List<RewardResponseDTO> list = Arrays.asList(rewardResponseDTO);
+        when(service.calculateAllCustomerRewards()).thenReturn(list);
 
         ResponseEntity<List<RewardResponseDTO>> result = rewardsController.getAllRewards();
 
-        Assertions.assertEquals(new ResponseEntity<List<RewardResponseDTO>>(Arrays.asList(new RewardResponseDTO("customerId", map, 0)), null, HttpStatus.CONTINUE), result);
+        Assertions.assertEquals(list, result.getBody());
+        Assertions.assertEquals(HttpStatus.OK, result.getStatusCode());
     }
 
     @Test
     void testGetRewardsByCustomer() {
         Map<String, Integer> map = new HashMap<>();
         map.put("monthlyPoints", Integer.valueOf(0));
-        when(service.calculateCustomerRewards(anyString())).thenReturn(new RewardResponseDTO("customerId", map, 0));
+        RewardResponseDTO rewardResponseDTO = new RewardResponseDTO("customerId", map, 0);
+        when(service.calculateCustomerRewards(anyString())).thenReturn(rewardResponseDTO);
 
         ResponseEntity<RewardResponseDTO> result = rewardsController.getRewardsByCustomer("customerId");
-        Assertions.assertEquals(new ResponseEntity<RewardResponseDTO>(new RewardResponseDTO("customerId", map, 0), null, HttpStatus.CONTINUE), result);
+        Assertions.assertEquals(rewardResponseDTO, result.getBody());
+        Assertions.assertEquals(HttpStatus.OK, result.getStatusCode());
     }
 
     @Test
     void testAddTransaction() {
-        when(service.addTransaction(any(CustomerReward.class))).thenReturn(new CustomerReward(Long.valueOf(1), "customerId", Double.valueOf(0), LocalDate.of(2025, Month.MAY, 1)));
+        CustomerReward customerReward = new CustomerReward(Long.valueOf(1), "customerId", Double.valueOf(0), LocalDate.of(2025, Month.MAY, 1));
+        when(service.addTransaction(any(CustomerReward.class))).thenReturn(customerReward);
 
         ResponseEntity<CustomerReward> result = rewardsController.addTransaction(new CustomerReward(Long.valueOf(1), "customerId", Double.valueOf(0), LocalDate.of(2025, Month.MAY, 1)));
-        Assertions.assertEquals(new ResponseEntity<CustomerReward>(new CustomerReward(Long.valueOf(1), "customerId", Double.valueOf(0), LocalDate.of(2025, Month.MAY, 1)), null, HttpStatus.CONTINUE), result);
+        Assertions.assertEquals(customerReward, result.getBody());
+        Assertions.assertEquals(HttpStatus.CREATED, result.getStatusCode());
     }
 
     @Test
     void testGetAllTransactions() {
-        when(service.getAllTransactions()).thenReturn(Arrays.asList(new CustomerReward(Long.valueOf(1), "customerId", Double.valueOf(0), LocalDate.of(2025, Month.MAY, 1))));
+        List<CustomerReward> rewardList = Arrays.asList(new CustomerReward(Long.valueOf(1), "customerId", Double.valueOf(0), LocalDate.of(2025, Month.MAY, 1)));
+        when(service.getAllTransactions()).thenReturn(rewardList);
 
         ResponseEntity<List<CustomerReward>> result = rewardsController.getAllTransactions();
-        Assertions.assertEquals(new ResponseEntity<List<CustomerReward>>(Arrays.asList(new CustomerReward(Long.valueOf(1), "customerId", Double.valueOf(0), LocalDate.of(2025, Month.MAY, 1))), null, HttpStatus.CONTINUE), result);
+        Assertions.assertEquals(rewardList, result.getBody());
+        Assertions.assertEquals(HttpStatus.OK, result.getStatusCode());
     }
 
     @Test
     void testDeleteTransaction() {
         ResponseEntity<String> result = rewardsController.deleteTransaction(Long.valueOf(1));
         verify(service).deleteTransaction(anyLong());
-        Assertions.assertEquals(new ResponseEntity<String>("body", null, HttpStatus.CONTINUE), result);
+        Assertions.assertEquals("deleted successfully", result.getBody());
+        Assertions.assertEquals(HttpStatus.GONE, result.getStatusCode());
     }
 
     @Test
     void testUpdateTransaction() {
-        when(service.updateTransaction(anyLong(), any(CustomerReward.class))).thenReturn(new CustomerReward(Long.valueOf(1), "customerId", Double.valueOf(0), LocalDate.of(2025, Month.MAY, 1)));
+        CustomerReward customerReward = new CustomerReward(Long.valueOf(1), "customerId", Double.valueOf(0), LocalDate.of(2025, Month.MAY, 1));
+        when(service.updateTransaction(anyLong(), any(CustomerReward.class))).thenReturn(customerReward);
 
         ResponseEntity<CustomerReward> result = rewardsController.updateTransaction(Long.valueOf(1), new CustomerReward(Long.valueOf(1), "customerId", Double.valueOf(0), LocalDate.of(2025, Month.MAY, 1)));
-        Assertions.assertEquals(new ResponseEntity<CustomerReward>(new CustomerReward(Long.valueOf(1), "customerId", Double.valueOf(0), LocalDate.of(2025, Month.MAY, 1)), null, HttpStatus.CONTINUE), result);
+        Assertions.assertEquals(customerReward, result.getBody());
+        Assertions.assertEquals(HttpStatus.OK, result.getStatusCode());
     }
 
 }
