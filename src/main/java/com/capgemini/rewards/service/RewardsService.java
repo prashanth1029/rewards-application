@@ -11,10 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.format.TextStyle;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -57,7 +54,9 @@ public class RewardsService {
     }
 
     public CustomerReward updateTransaction(Long id, CustomerReward updatedTransaction) {
-        return repository.findById(id).map(existing -> {
+        Optional<CustomerReward> optionalCustomerReward = repository.findById(id);
+
+        return optionalCustomerReward.map(existing -> {
             existing.setAmount(updatedTransaction.getAmount());
             existing.setCustomerId(updatedTransaction.getCustomerId());
             existing.setTransactionDate(updatedTransaction.getTransactionDate());
@@ -65,7 +64,7 @@ public class RewardsService {
         }).orElseThrow(() -> new CustomerRewardNotFoundException("Transaction with ID " + id + " not found."));
     }
 
-    private RewardResponseDTO buildRewardResponse(String customerId, List<CustomerReward> transactions) {
+    public RewardResponseDTO buildRewardResponse(String customerId, List<CustomerReward> transactions) {
         Map<String, Integer> monthlyPoints = new HashMap<>();
         int totalPoints = 0;
 

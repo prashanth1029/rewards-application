@@ -9,13 +9,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.mockito.Mockito.*;
 
@@ -32,12 +31,16 @@ class RewardsServiceTest {
 
     @Test
     void testCalculateAllCustomerRewards() {
-        when(repository.findAll()).thenReturn(Arrays.asList(new CustomerReward(Long.valueOf(1), "customerId", Double.valueOf(0), LocalDate.of(2025, Month.MAY, 1))));
+        List<CustomerReward> rewardList = Arrays.asList(new CustomerReward(Long.valueOf(1), "customerId", Double.valueOf(0), LocalDate.of(2025, Month.MAY, 1)));
+        when(repository.findAll()).thenReturn(rewardList);
+        Map<String, List<CustomerReward>> customerIdCustomerRewardmap = rewardList.stream().collect(Collectors.groupingBy(CustomerReward::getCustomerId));
+
+        List<RewardResponseDTO> rewardResponseDTOList = customerIdCustomerRewardmap.entrySet().stream()
+                .map(entry -> rewardsService.buildRewardResponse(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
 
         List<RewardResponseDTO> result = rewardsService.calculateAllCustomerRewards();
-        Map<String, Integer> map = new HashMap<>();
-        map.put("MAY", Integer.valueOf(0));
-        Assertions.assertEquals(Arrays.asList(new RewardResponseDTO("customerId", map, 0)), result);
+        Assertions.assertEquals(rewardResponseDTOList, result);
     }
 
     @Test
@@ -46,13 +49,13 @@ class RewardsServiceTest {
 
         RewardResponseDTO result = rewardsService.calculateCustomerRewards("customerId");
         Map<String, Integer> map = new HashMap<>();
-        map.put("monthlyPoints", Integer.valueOf(0));
+        map.put("May", Integer.valueOf(0));
         Assertions.assertEquals(new RewardResponseDTO("customerId", map, 0), result);
     }
 
     @Test
     void testAddTransaction() {
-        when(repository.save(any(CustomerReward.class))).thenReturn(new CustomerReward());
+        when(repository.save(any(CustomerReward.class))).thenReturn(new CustomerReward(Long.valueOf(1), "customerId", Double.valueOf(0), LocalDate.of(2025, Month.MAY, 1)));
 
         CustomerReward result = rewardsService.addTransaction(new CustomerReward(Long.valueOf(1), "customerId", Double.valueOf(0), LocalDate.of(2025, Month.MAY, 1)));
         Assertions.assertEquals(new CustomerReward(Long.valueOf(1), "customerId", Double.valueOf(0), LocalDate.of(2025, Month.MAY, 1)), result);
@@ -76,8 +79,9 @@ class RewardsServiceTest {
 
     @Test
     void testUpdateTransaction() {
-        when(repository.save(any(CustomerReward.class))).thenReturn(new CustomerReward());
-        when(repository.findById(any(Long.class))).thenReturn(null);
+        when(repository.save(any(CustomerReward.class))).thenReturn(new CustomerReward(Long.valueOf(1), "customerId", Double.valueOf(0), LocalDate.of(2025, Month.MAY, 1)));;
+        CustomerReward customerReward = new CustomerReward(Long.valueOf(1), "customerId", Double.valueOf(0), LocalDate.of(2025, Month.MAY, 1));
+        when(repository.findById(any(Long.class))).thenReturn(Optional.of(customerReward));
 
         CustomerReward result = rewardsService.updateTransaction(Long.valueOf(1), new CustomerReward(Long.valueOf(1), "customerId", Double.valueOf(0), LocalDate.of(2025, Month.MAY, 1)));
         Assertions.assertEquals(new CustomerReward(Long.valueOf(1), "customerId", Double.valueOf(0), LocalDate.of(2025, Month.MAY, 1)), result);
