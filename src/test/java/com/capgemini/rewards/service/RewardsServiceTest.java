@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpStatus;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -41,6 +40,14 @@ class RewardsServiceTest {
 
         List<RewardResponseDTO> result = rewardsService.calculateAllCustomerRewards();
         Assertions.assertEquals(rewardResponseDTOList, result);
+        List<CustomerReward> rewardList1 = Arrays.asList(
+                new CustomerReward(1L, null, 100.0, LocalDate.of(2025, Month.MAY, 1))
+        );
+        when(repository.findAll()).thenReturn(rewardList1);
+
+        Assertions.assertThrows(NullPointerException.class, () -> {
+            rewardsService.calculateAllCustomerRewards();
+        });
     }
 
     @Test
@@ -79,7 +86,7 @@ class RewardsServiceTest {
 
     @Test
     void testUpdateTransaction() {
-        when(repository.save(any(CustomerReward.class))).thenReturn(new CustomerReward(Long.valueOf(1), "customerId", Double.valueOf(0), LocalDate.of(2025, Month.MAY, 1)));;
+        when(repository.save(any(CustomerReward.class))).thenReturn(new CustomerReward(Long.valueOf(1), "customerId", Double.valueOf(0), LocalDate.of(2025, Month.MAY, 1)));
         CustomerReward customerReward = new CustomerReward(Long.valueOf(1), "customerId", Double.valueOf(0), LocalDate.of(2025, Month.MAY, 1));
         when(repository.findById(any(Long.class))).thenReturn(Optional.of(customerReward));
 
