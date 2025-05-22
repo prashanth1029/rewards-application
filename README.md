@@ -1,5 +1,24 @@
-rewards-controller
-check endpoints using swagger at - http://localhost:8080/swagger-ui/index.html
+Overview
+--------
+The Rewards Controller provides the following capabilities:
+Create a customer reward
+Retrieve all rewards
+Delete or update a reward by ID
+Calculate reward points for a customer
+Calculate reward points for all customers
+
+DTOs & Entities
+---------------
+CustomerReward: Entity representing a transaction
+RewardResponseDTO: DTO representing reward points grouped by month and total
+
+Validation & Error Handling
+---------------------------
+Uses @Valid on request bodies to enforce field-level validation
+Returns 400 Bad Request for invalid inputs, MethodArgumentNotValidException
+Custom exceptions (like CustomerRewardNotFoundException, CustomerNotFoundException) mapped to 404
+
+check endpoints documentation using swagger at - http://localhost:8080/swagger-ui/index.html
 
 PUT
 /rewards/editReward/{id}
@@ -37,7 +56,6 @@ Schema
 }
 
 ===========================================================================
-
 POST
 /rewards/createReward
 Add a new customer transaction
@@ -72,7 +90,6 @@ Schema
 "totalPoints": 0
 }
 ============================================================================
-
 GET
 /rewards
 Get reward points for all customers
@@ -125,7 +142,6 @@ Schema
 }
 
 =======================================================================
-
 GET
 /rewards/getAllRewards
 Get all customer transactions
